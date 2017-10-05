@@ -4,20 +4,34 @@
 import requests
 import sys
 
-
 __author__ = "ch4n3"
 
+argv = sys.argv
 
-tistoryAccount  = raw_input("[*] Tistory 계정 (*.tistory.com) : ")
-searchKeyword   = raw_input("[*] 검색어 : ")
-site            = raw_input("1. 구글 / 2. 네이버 : ")
+if len(argv) != 5:
+    print "[*] Usage :      {0} [tistory 계정] [검색] [google/naver] [횟수]".format(argv[0])
+    print "[+] Example :    {0} chaneyoon \"sql injection\" google 100".format(argv[0])
+    sys.exit(1)
 
-if site == "2":
-	referer = 'https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&query='+searchKeyword+'&oquery=%EC%9C%A4%EC%84%9D%EC%B0%AC+%ED%8C%AC%ED%81%B4%EB%9F%BD&tqi=TOKM4wpVuENsssSeZxhssssssQ4-326906'
+tistoryAccount  = argv[1]
+searchKeyword   = argv[2]
+site            = argv[3]
+cnt             = int(argv[4])
+
+
+# Set tistory url
+url = "http://{0}.tistory.com/".format(tistoryAccount)
+
+
+# Set referer
+if site == "naver":
+    referer = 'https://search.naver.com/'
+    referer += 'search.naver?sm=tab_hty.top&where=nexearch&query='+searchKeyword+'&oquery=%EC%9C%A4%EC%84%9D%EC%B0%AC+%ED%8C%AC%ED%81%B4%EB%9F%BD&tqi=TOKM4wpVuENsssSeZxhssssssQ4-326906'
 else :
-	referer = 'https://www.google.co.kr/search?dcr=0&source=hp&q='+searchKeyword+'&oq='+searchKeyword+'&gs_l=psy-ab.3..35i39k1l2j0l8.63401.67062.0.67388.25.18.2.0.0.0.208.1968.0j8j3.12.0.dummy_maps_web_fallback...0...1.1j4.64.psy-ab..12.13.2037.6..0i10k1j0i131k1j0i3k1.188.2F7gO-l3NL8'
-
-url = 'http://{0}.tistory.com/'.format(tistoryAccount)
+    site = "google"
+    referer = 'https://www.google.co.kr/'
+    referer += 'search?dcr=0&source=hp&q='+searchKeyword+'&oq='+searchKeyword
+    referer += '&gs_l=psy-ab.3..35i39k1l2j0l8.63401.67062.0.67388.25.18.2.0.0.0.208.1968.0j8j3.12.0.dummy_maps_web_fallback...0...1.1j4.64.psy-ab..12.13.2037.6..0i10k1j0i131k1j0i3k1.188.2F7gO-l3NL8'
 
 
 headers = {
@@ -30,11 +44,17 @@ headers = {
 }
 
 
-i = 0
+print "="*30
+print "[*] url  : {0}".format(url)
+print "[*] Search Keyword   : {0}".format(searchKeyword)
+print "[*] Referer site : {0}".format(site)
+print "[*] Count    : {0}".format(cnt)
+print "="*30
+
+print "\n\nPress ctrl+c to exit\n\n"
 
 try:
-    for i in range(1000):
-        i += 1
+    for i in range(1, cnt+1):
         r = requests.get(url, headers=headers)
         print "조회수 +{0}".format(i)
 
